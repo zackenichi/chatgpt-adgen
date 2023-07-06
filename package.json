@@ -13,7 +13,10 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.13.7",
     "@mui/material": "^5.13.7",
+    "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
     "next": "13.4.8",
+    "openai": "^3.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }

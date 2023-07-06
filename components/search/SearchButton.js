@@ -4,7 +4,7 @@ import SearchIcon from '@mui/icons-material/Search';
 const SearchButton = ({ handleSearch }) => {
   return (
     <Button variant="contained" endIcon={<SearchIcon />} onClick={handleSearch}>
-      Search
+      Generate
     </Button>
   );
 };
