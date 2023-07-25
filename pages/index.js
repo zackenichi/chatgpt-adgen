@@ -21,8 +21,13 @@ export default function HomePage() {
 
         const encodedUrl = encodeURIComponent(baseUrl);
 
+        // const headlinesResponse = await axios.post(
+        //   `/api/generate?baseUrl=${encodedUrl}`
+        // );
+
+        // Call the Cloud Function using axios
         const headlinesResponse = await axios.post(
-          `/api/generate?baseUrl=${encodedUrl}`
+          `https://generate-cvvtxzln5a-uc.a.run.app?baseUrl=${encodedUrl}`
         );
 
         setHeadlines(headlinesResponse.data);
