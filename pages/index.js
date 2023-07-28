@@ -30,6 +30,9 @@ export default function HomePage() {
           `https://generate-cvvtxzln5a-uc.a.run.app?baseUrl=${encodedUrl}`
         );
 
+        // scrape content - https://scrapecontent-cvvtxzln5a-uc.a.run.app
+        // generate - https://generate-cvvtxzln5a-uc.a.run.app
+
         setHeadlines(headlinesResponse.data);
         setLoading(false);
       } catch (error) {
