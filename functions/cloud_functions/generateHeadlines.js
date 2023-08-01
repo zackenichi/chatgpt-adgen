@@ -19,7 +19,7 @@ const getCompanyName = async (content) => {
 
     const prompt = `Get the company name based on the following content:
           
-          \`\`\`${content}\`\`\`
+          ${content}
           `;
 
     const completion = await openai.createCompletion({
@@ -104,11 +104,13 @@ const generateHeadlines = async (content, prompt) => {
 };
 
 const getHtml = async (baseUrl) => {
-  const html = await axios.post(
+  const response = await axios.post(
     `https://scrapecontent-cvvtxzln5a-uc.a.run.app?baseUrl=${baseUrl}`
   );
 
-  return html;
+  const siteContent = response.data.extractedText;
+
+  return siteContent;
 };
 
 export const generate = onRequest(async (req, res) => {

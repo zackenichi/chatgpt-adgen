@@ -21,17 +21,9 @@ export default function HomePage() {
 
         const encodedUrl = encodeURIComponent(baseUrl);
 
-        // const headlinesResponse = await axios.post(
-        //   `/api/generate?baseUrl=${encodedUrl}`
-        // );
-
-        // Call the Cloud Function using axios
         const headlinesResponse = await axios.post(
           `https://generate-cvvtxzln5a-uc.a.run.app?baseUrl=${encodedUrl}`
         );
-
-        // scrape content - https://scrapecontent-cvvtxzln5a-uc.a.run.app
-        // generate - https://generate-cvvtxzln5a-uc.a.run.app
 
         setHeadlines(headlinesResponse.data);
         setLoading(false);

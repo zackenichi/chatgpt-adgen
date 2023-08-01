@@ -14,7 +14,7 @@ const ResultsContainer = ({ url, results, generateNew, loading }) => {
     return <Typography sx={{ color: 'red' }}>Invalid URL</Typography>;
   }
 
-  console.log(results);
+  // console.log(results);
 
   return (
     <Grid container spacing={2}>
