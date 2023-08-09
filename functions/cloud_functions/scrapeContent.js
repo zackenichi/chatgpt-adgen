@@ -1,11 +1,16 @@
-import axios from 'axios';
+import fetch from 'node-fetch';
 import * as cheerio from 'cheerio';
 import { onRequest } from 'firebase-functions/v2/https';
 
 const getHtml = async (url) => {
   try {
-    const response = await axios.get(url);
-    const $ = cheerio.load(response.data);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to fetch the URL');
+    }
+
+    const html = await response.text(); // Get the HTML content from the response
+    const $ = cheerio.load(html);
     const divs = [];
     const extractedContent = new Set(); // Track extracted content to avoid duplicates
 
@@ -13,7 +18,7 @@ const getHtml = async (url) => {
       // Exclude elements inside the <footer> tag
       $(element)
         .find('h1, h2, h3, h4, p')
-        .each((index, el) => {
+        .each((_index, el) => {
           const elementType = $(el).prop('tagName').toLowerCase();
           const content = $(el).text().trim().replace(/\s+/g, ' ');
 

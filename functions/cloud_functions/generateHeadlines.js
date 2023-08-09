@@ -1,4 +1,4 @@
-import axios from 'axios';
+import fetch from 'node-fetch';
 import { Configuration, OpenAIApi } from 'openai';
 import { onRequest } from 'firebase-functions/v2/https';
 
@@ -9,7 +9,9 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 // set number of choices to get here
-const numberOfChoices = 3;
+const NUMBER_OF_CHOICES = 3;
+const HEADLINE_CHARACTER_LIMIT = 30;
+const BODY_CHARACTER_LIMIT = 90;
 
 const getCompanyName = async (content) => {
   try {
@@ -25,7 +27,7 @@ const getCompanyName = async (content) => {
     const completion = await openai.createCompletion({
       model: 'text-davinci-003',
       prompt: prompt,
-      temperature: 0.6,
+      temperature: 0.2,
       max_tokens: 100,
     });
 
@@ -49,7 +51,10 @@ const getTone = async (content) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    const prompt = `What would be the best phrase to describe the goal in creating a Digital advertisement given the following content:
+    const prompt = `Commonly used tones in ads:
+    Humorous, Emotional, Inspirational, Informational, Aspirational, Urgent, Problem-Solving, Nostalgic, Sentimental, Whimsical, Playful and Luxurious.
+    
+    In one word, pick the tone that closely matches the content below:
                 
                 \`\`\`${content}\`\`\`
                 `;
@@ -67,7 +72,7 @@ const getTone = async (content) => {
       const tone = generatedChoices[0].text.trim();
       return tone;
     } else {
-      throw new Error('No company name generated');
+      throw new Error('No tone matches');
     }
   } catch (error) {
     console.error('Error with OpenAI API request:', error.message);
@@ -89,9 +94,9 @@ const generateHeadlines = async (content, prompt) => {
     const completion = await openai.createCompletion({
       model: 'text-davinci-003',
       prompt: fullPrompt,
-      temperature: 0.6,
+      temperature: 0.2,
       max_tokens: 100,
-      n: numberOfChoices,
+      n: NUMBER_OF_CHOICES,
     });
 
     // Process the completion response here
@@ -104,13 +109,23 @@ const generateHeadlines = async (content, prompt) => {
 };
 
 const getHtml = async (baseUrl) => {
-  const response = await axios.post(
-    `https://scrapecontent-cvvtxzln5a-uc.a.run.app?baseUrl=${baseUrl}`
-  );
+  try {
+    const response = await fetch(
+      `https://scrapecontent-cvvtxzln5a-uc.a.run.app?baseUrl=${baseUrl}`
+    );
 
-  const siteContent = response.data.extractedText;
+    if (!response.ok) {
+      throw new Error('Failed to fetch the HTML content');
+    }
 
-  return siteContent;
+    const data = await response.json(); // Get the JSON data from the response
+    const siteContent = data.extractedText;
+
+    return siteContent;
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error;
+  }
 };
 
 export const generate = onRequest(async (req, res) => {
@@ -126,7 +141,7 @@ export const generate = onRequest(async (req, res) => {
     const companyName = await getCompanyName(extractedText);
     const tone = await getTone(extractedText);
 
-    const prompt = `You are a marketing copywriter for ${companyName}. I'd like for you to help me make some digital ads. Give me a headline and copy with ${tone} given the following content`;
+    const prompt = `You are a marketing copywriter for ${companyName}. I'd like for you to help me make some digital ads. Give me a headline and copy that sounds ${tone}. The marketing copy should capture the tone within ${BODY_CHARACTER_LIMIT} characters and the headline within ${HEADLINE_CHARACTER_LIMIT} characters. Use the following content`;
 
     const generatedChoices = await generateHeadlines(extractedText, prompt);
 
@@ -149,6 +164,7 @@ export const generate = onRequest(async (req, res) => {
       return {
         headline: cleanHeadline,
         copy: cleanCopy,
+        // copy: trimmedCopy,
       };
     });
 

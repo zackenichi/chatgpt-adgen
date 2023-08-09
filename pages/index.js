@@ -3,7 +3,7 @@ import SearchContainer from '@/components/search';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { addHttpToUrl, isValidUrl } from '@/helpers/input-utils';
 import { Grid } from '@mui/material';
-import axios from 'axios';
+import axios from 'axios'; // Import axios
 import { Fragment, useRef, useState } from 'react';
 
 export default function HomePage() {
@@ -18,14 +18,13 @@ export default function HomePage() {
     if (isValidUrl(urlInput)) {
       try {
         const baseUrl = addHttpToUrl(urlInput);
-
         const encodedUrl = encodeURIComponent(baseUrl);
 
-        const headlinesResponse = await axios.post(
+        const response = await axios.post(
           `https://generate-cvvtxzln5a-uc.a.run.app?baseUrl=${encodedUrl}`
         );
 
-        setHeadlines(headlinesResponse.data);
+        setHeadlines(response.data);
         setLoading(false);
       } catch (error) {
         console.error('Error: ', error.message);
