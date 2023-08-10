@@ -111,7 +111,7 @@ const generateHeadlines = async (content, prompt) => {
 const getHtml = async (baseUrl) => {
   try {
     const response = await fetch(
-      `https://scrapecontent-cvvtxzln5a-uc.a.run.app?baseUrl=${baseUrl}`
+      `https://scrapecontent-gyvyhhu3gq-uc.a.run.app?baseUrl=${baseUrl}`
     );
 
     if (!response.ok) {

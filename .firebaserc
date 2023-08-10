@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "generate-headlines"
+    "default": "content-generator-poc"
   }
 }
