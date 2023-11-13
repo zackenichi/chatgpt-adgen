@@ -21,7 +21,7 @@ export default function HomePage() {
         const encodedUrl = encodeURIComponent(baseUrl);
 
         const response = await axios.post(
-          `https://generate-gyvyhhu3gq-uc.a.run.app?baseUrl=${encodedUrl}`
+          `${process.env.NEXT_PUBLIC_GENERATE_FUNCTION_URL}${encodedUrl}`
         );
 
         setHeadlines(response.data);

@@ -110,9 +110,7 @@ const generateHeadlines = async (content, prompt) => {
 
 const getHtml = async (baseUrl) => {
   try {
-    const response = await fetch(
-      `https://scrapecontent-gyvyhhu3gq-uc.a.run.app?baseUrl=${baseUrl}`
-    );
+    const response = await fetch(`${process.env.SCRAPE_URL_BASE}${baseUrl}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch the HTML content');
