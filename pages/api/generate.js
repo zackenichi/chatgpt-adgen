@@ -1,11 +1,10 @@
 import fetch from 'node-fetch';
 import { Configuration, OpenAIApi } from 'openai';
-import { onRequest } from 'firebase-functions/v2/https';
 
+// Initialize OpenAI configuration
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
 const openai = new OpenAIApi(configuration);
 
 // Constants for character limits and number of choices
@@ -13,6 +12,7 @@ const NUMBER_OF_CHOICES = 3;
 const HEADLINE_CHARACTER_LIMIT = 30;
 const BODY_CHARACTER_LIMIT = 90;
 
+// Function to get the company name
 const getCompanyName = async (content) => {
   try {
     if (!configuration.apiKey) {
@@ -43,6 +43,7 @@ const getCompanyName = async (content) => {
   }
 };
 
+// Function to get the tone
 const getTone = async (content) => {
   try {
     if (!configuration.apiKey) {
@@ -76,6 +77,7 @@ const getTone = async (content) => {
   }
 };
 
+// Function to generate headlines
 const generateHeadlines = async (content, prompt) => {
   try {
     if (!configuration.apiKey) {
@@ -102,6 +104,7 @@ const generateHeadlines = async (content, prompt) => {
   }
 };
 
+// Function to get HTML content
 const getHtml = async (baseUrl) => {
   try {
     const response = await fetch(
@@ -112,7 +115,7 @@ const getHtml = async (baseUrl) => {
       throw new Error('Failed to fetch the HTML content');
     }
 
-    const data = await response.json();
+    const data = await response.json(); // Get the JSON data from the response
     const siteContent = data.extractedText;
 
     return siteContent;
@@ -122,19 +125,16 @@ const getHtml = async (baseUrl) => {
   }
 };
 
-export const generate = onRequest(async (req, res) => {
+// Next.js API route handler
+export default async function handler(req, res) {
   // Set CORS headers to allow cross-origin requests
-  res.set('Access-Control-Allow-Origin', '*');
-
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
-  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   try {
     const { baseUrl } = req.query;
 
     if (!baseUrl) {
-      return res.status(400).json({ error: 'Enter website URL' });
+      return res.status(400).json({ error: 'Base URL is required' });
     }
 
     const extractedText = await getHtml(baseUrl);
@@ -160,6 +160,7 @@ export const generate = onRequest(async (req, res) => {
       // Removing quotes and \n from the copy
       const cleanCopy = copy.trim().replace(/['"]+/g, '').replace(/\n/g, '');
 
+      // Creating an object with the extracted headline and copy
       return {
         headline: cleanHeadline,
         copy: cleanCopy,
@@ -171,4 +172,4 @@ export const generate = onRequest(async (req, res) => {
     console.error('Error with content generation:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-});
+}

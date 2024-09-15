@@ -20,8 +20,12 @@ export default function HomePage() {
         const baseUrl = addHttpToUrl(urlInput);
         const encodedUrl = encodeURIComponent(baseUrl);
 
+        // const response = await axios.post(
+        //   `${process.env.NEXT_PUBLIC_GENERATE_FUNCTION_URL}${encodedUrl}`
+        // );
+
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_GENERATE_FUNCTION_URL}${encodedUrl}`
+          `/api/generate?baseUrl=${encodedUrl}`
         );
 
         setHeadlines(response.data);
